@@ -20,7 +20,7 @@ class RestauranteController extends Controller
     public function index()
     {
         try {
-            $restaurantes = Restaurante::all();
+            $restaurantes = Restaurante::with('cardapios')->get();
 
             return $this->success(
                 "Todos os restaurantes", 
