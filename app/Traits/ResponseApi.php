@@ -5,7 +5,7 @@ namespace App\Traits;
 trait ResponseAPI
 {
 
-    private function coreResponse(string $message, int $statusCode, bool $isSuccess, array $data, array $errorValidator)
+    private function coreResponse(string $message, int $statusCode, bool $isSuccess, $data, $errorValidator)
     {
         if($isSuccess) {
             return response()->json([
@@ -22,12 +22,12 @@ trait ResponseAPI
         }
     }
 
-    public function success(string $message, int $statusCode, array $data = [])
+    public function success(string $message, int $statusCode, $data = [])
     {
         return $this->coreResponse($message, $statusCode, true, $data, []);
     }
 
-    public function error(string $message, int $statusCode, array $errorValidator = [])
+    public function error(string $message, int $statusCode, $errorValidator = [])
     {
         if($statusCode == 0)
             $statusCode = 500;

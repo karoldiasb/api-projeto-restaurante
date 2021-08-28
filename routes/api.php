@@ -15,4 +15,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('/restaurantes', App\Http\Controllers\Api\RestauranteController::class);
+Route::resource('/cardapios', App\Http\Controllers\Api\CardapioController::class);
 
