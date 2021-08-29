@@ -9,10 +9,19 @@ use App\Models\Restaurante;
 use DB;
 use App\Traits\ResponseAPI;
 
-
 class CardapioController extends Controller
 {
     use ResponseAPI;
+
+    /**
+     * Create a new CardapioController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('apiJWT', ['except' => ['index','show']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -97,7 +106,6 @@ class CardapioController extends Controller
 
         } catch(\Exception $e) {
             DB::rollBack();
-            dd($e);
             return $this->error(
                 $e->getMessage(), 
                 $e->getCode(),

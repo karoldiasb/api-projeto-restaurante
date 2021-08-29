@@ -12,6 +12,16 @@ class RestauranteController extends Controller
 {
     use ResponseAPI;
 
+     /**
+     * Create a new RestauranteController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('apiJWT', ['except' => ['index','show']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
