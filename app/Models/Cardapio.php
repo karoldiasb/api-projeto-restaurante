@@ -12,4 +12,7 @@ class Cardapio extends Model
     function restaurante(){
         return $this->belongsTo('App\Models\Restaurante');
     }
+    function produtos(){
+        return $this->hasMany('App\Models\Produto');
+    }
 }
