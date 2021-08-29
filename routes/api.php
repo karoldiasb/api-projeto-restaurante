@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/auth/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
+Route::get('/auth/logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
 Route::post('/registrar', [App\Http\Controllers\Api\UserController::class, 'store']);
 Route::resource('/restaurantes', App\Http\Controllers\Api\RestauranteController::class);
 Route::resource('/cardapios', App\Http\Controllers\Api\CardapioController::class);
