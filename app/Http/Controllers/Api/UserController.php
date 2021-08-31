@@ -38,11 +38,14 @@ class UserController extends Controller
 
             DB::commit();
 
-            return (new AuthController())->login($request);
+            return $this->success(
+                "Usuário criado com sucesso!", 
+                201, 
+                $user
+            );
 
        } catch(\Exception $e) {
            DB::rollBack();
-           dd($e);
            return $this->error(
                $e->getMessage(), 
                $e->getCode(),
