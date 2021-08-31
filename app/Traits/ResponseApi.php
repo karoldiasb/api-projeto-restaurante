@@ -9,13 +9,13 @@ trait ResponseAPI
     {
         if($isSuccess) {
             return response()->json([
-                'error' => false,
+                'success' => true,
                 'message' => $message,
                 'results' => $data
             ], $statusCode);
         } else {
             return response()->json([
-                'error' => true,
+                'success' => false,
                 'message' => $message,
                 'error_validator' => $errorValidator,
             ], $statusCode);
