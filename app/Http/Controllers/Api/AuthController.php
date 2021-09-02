@@ -28,7 +28,7 @@ class AuthController extends Controller
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json([
                 'success' => false,
-                'error' => 'Login inválido. Verifique suas credenciais.'
+                'error' => 'Invalid Login. Please check your credentials.'
             ], 401);
         }
 
