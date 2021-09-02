@@ -123,7 +123,7 @@ class CardapioController extends Controller
     public function show($id)
     {
         try {
-            $cardapio = Cardapio::find($id);
+            $cardapio = Cardapio::with('produtos')->find($id);
             
             return $this->success(
                 "Cardápio", 
