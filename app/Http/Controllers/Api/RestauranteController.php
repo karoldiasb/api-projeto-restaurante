@@ -92,7 +92,7 @@ class RestauranteController extends Controller
     public function show($id)
     {
         try {
-            $restaurante = Restaurante::find($id);
+            $restaurante = Restaurante::with('cardapios')->find($id);
             
             return $this->success(
                 "Restaurante", 
