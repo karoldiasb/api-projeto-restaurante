@@ -58,7 +58,7 @@ class ProdutoController extends Controller
     {
         try {
             $validated = $request->validate([
-                'produtos' => 'required',
+                'descricao' => 'required',
             ]);
 
             DB::beginTransaction();
@@ -71,13 +71,10 @@ class ProdutoController extends Controller
                     400
                 );
 
-            foreach($request->produtos as $p){
-                $produto = new Produto();
-                $produto->descricao = $p;
-                $produto->cardapio()->associate($cardapio);
-                $produto->save();
-            }
-            
+            $produto = new Produto();
+            $produto->descricao = $request->descricao;
+            $produto->cardapio()->associate($cardapio);
+            $produto->save();
 
             DB::commit();
 
@@ -136,7 +133,7 @@ class ProdutoController extends Controller
                 'descricao' => 'required',
             ]);
             
-            $cardapio = Produto::find($request->cardapio_id);
+            $cardapio = Cardapio::find($request->cardapio_id);
 
             if(!$cardapio) 
                 return $this->error(
