@@ -8,7 +8,7 @@ use App\Models\Produto;
 use App\Models\Cardapio;
 use DB;
 use App\Traits\ResponseAPI;
-
+use App\Enum\HttpStatusCode;
 
 class ProdutoController extends Controller
 {
@@ -34,18 +34,16 @@ class ProdutoController extends Controller
         try {
             $produtos = Produto::with('cardapio')->get();
 
-            return $this->success(
-                "Todos os produtos", 
-                200, 
-                $produtos
-            );
+            return $this->success(HttpStatusCode::OK, $produtos);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );
+            return $this->error($e->getCode(), $e->getMessage());
         }
+    }
+
+    private function isValidAssociateProdutoAoCardapio($cardapio)
+    {
+        return count($cardapio->produtos) == 10 ? FALSE : TRUE;
     }
 
     /**
@@ -67,9 +65,18 @@ class ProdutoController extends Controller
 
             if(!$cardapio) 
                 return $this->error(
-                    'Cardápio não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Cardápio não encontrado'
                 );
+
+            if(!$this->isValidAssociateProdutoAoCardapio($cardapio)){
+                return $this->error(
+                    HttpStatusCode::UNPROCESSABLE_ENTITY,
+                    "O cardápio {$cardapio->descricao} já possui 10 produtos! 
+                    O máximo é 10."
+                );
+            }
+            $this->isValidAssociateProdutoAoCardapio($cardapio);
 
             $produto = new Produto();
             $produto->descricao = $request->descricao;
@@ -78,17 +85,13 @@ class ProdutoController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Produto criado com sucesso!", 
-                201, 
-                $produto
-            );
+            return $this->success(HttpStatusCode::CREATED, $produto);
 
         } catch(\Exception $e) {
             DB::rollBack();
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -105,17 +108,10 @@ class ProdutoController extends Controller
         try {
             $produto = Produto::find($id);
             
-            return $this->success(
-                "Produto", 
-                200, 
-                $produto
-            );
+            return $this->success(HttpStatusCode::OK, $produto);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode(),
-            );
+            return $this->error($e->getCode(), $e->getMessage());     
         }
     }
 
@@ -137,15 +133,15 @@ class ProdutoController extends Controller
 
             if(!$cardapio) 
                 return $this->error(
-                    'Cardápio não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Cardápio não encontrado'
                 );
 
             $produto = Produto::find($id);
             if(!$produto) 
                 return $this->error(
-                    'Produto não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Produto não encontrado'
                 );
 
             $produto->descricao = $request->descricao;
@@ -154,16 +150,12 @@ class ProdutoController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Produto alterado com sucesso!", 
-                200, 
-                $produto
-            );
+            return $this->success(HttpStatusCode::UPDATED);
             
         } catch(\Exception $e) {
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -183,25 +175,19 @@ class ProdutoController extends Controller
 
             if(!$produto) 
                 return $this->error(
-                    'Produto não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Produto não encontrado'
                 );
 
             $produto->delete();
 
             DB::commit();
 
-            return $this->success(
-                "Produto deletado com sucesso!", 
-                200
-            );
+            return $this->success(HttpStatusCode::DELETED);
             
         } catch(\Exception $e) {
             DB::rollBack();
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );     
+            return $this->error($e->getCode(), $e->getMessage());         
         }
     }
 }

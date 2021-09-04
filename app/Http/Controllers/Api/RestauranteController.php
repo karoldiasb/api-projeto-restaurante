@@ -8,6 +8,7 @@ use App\Models\Restaurante;
 use App\Models\User;
 use DB;
 use App\Traits\ResponseAPI;
+use App\Enum\HttpStatusCode;
 
 class RestauranteController extends Controller
 {
@@ -39,17 +40,10 @@ class RestauranteController extends Controller
                 $restaurantes = Restaurante::with('cardapios', 'cardapios.produtos')->get();
             }
             
-            return $this->success(
-                "Todos os restaurantes", 
-                200, 
-                $restaurantes
-            );
+            return $this->success(HttpStatusCode::OK, $restaurantes);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );
+            return $this->error($e->getCode(), $e->getMessage());
         }
     }
 
@@ -72,8 +66,8 @@ class RestauranteController extends Controller
 
             if(!$user) 
                 return $this->error(
-                    'Usuário não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Usuário não encontrado'
                 );
 
             $restaurante = new Restaurante();
@@ -83,17 +77,13 @@ class RestauranteController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Restaurante criado com sucesso!", 
-                201, 
-                $restaurante
-            );
+            return $this->success(HttpStatusCode::CREATED, $restaurante);
 
         } catch(\Exception $e) {
             DB::rollBack();
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -110,17 +100,10 @@ class RestauranteController extends Controller
         try {
             $restaurante = Restaurante::with('cardapios')->find($id);
             
-            return $this->success(
-                "Restaurante", 
-                200, 
-                $restaurante
-            );
+            return $this->success(HttpStatusCode::OK, $restaurante);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode(),
-            );
+            return $this->error($e->getCode(), $e->getMessage());
         }
     }
 
@@ -144,8 +127,8 @@ class RestauranteController extends Controller
 
             if(!$restaurante) 
                 return $this->error(
-                    'Restaurante não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Restaurante não encontrado'
                 );
             
             $restaurante->nome = $request->nome;
@@ -153,16 +136,12 @@ class RestauranteController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Restaurante alterado com sucesso!", 
-                200, 
-                $restaurante
-            );
+            return $this->success(HttpStatusCode::UPDATED);
             
         } catch(\Exception $e) {
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -182,25 +161,19 @@ class RestauranteController extends Controller
 
             if(!$restaurante) 
                 return $this->error(
-                    'Restaurante não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Restaurante não encontrado'
                 );
 
             $restaurante->delete();
 
             DB::commit();
 
-            return $this->success(
-                "Restaurante deletado com sucesso!", 
-                200
-            );
+            return $this->success(HttpStatusCode::DELETED);
             
         } catch(\Exception $e) {
             DB::rollBack();
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );     
+            return $this->error($e->getCode(), $e->getMessage());     
         }
     }
 }

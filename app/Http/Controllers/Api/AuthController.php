@@ -5,18 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Enum\HttpStatusCode;
+use App\Traits\ResponseAPI;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        // $this->middleware('auth:api', ['except' => ['login']]);
-    }
+    use ResponseAPI;
+
     /**
      * Get a JWT via given credentials.
      *
@@ -27,16 +22,17 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);   
 
         $user = User::where('email', '=', $request->email)->get()->first();
-
+        if(is_null($user)){
+            return $this->error(
+                HttpStatusCode::NOT_FOUND,
+                'Usuário não existe'
+            );
+        }
         if (!$token = auth('api')->attempt($credentials)) {
-            $msg_error = "Invalid Login. Please check your credentials.";
-            if(count($user) == 0){
-                $msg_error = "User doesn't exist.";
-            }
-            return response()->json([
-                'success' => false,
-                'error' => $msg_error
-            ], 401);
+            return $this->error(
+                HttpStatusCode::NOT_FOUND,
+                'Login inválido. Verifique suas credenciais.'
+            );
         }
         
         return $this->respondWithTokenAndUserId($token, $user->id);
@@ -61,7 +57,10 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['success' => true, 'message' => 'Successfully logged out']);
+        return $this->success(
+            HttpStatusCode::OK,
+            "Usuário deslogado"
+        );
     }
 
     /**
@@ -89,6 +88,6 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
+        ], HttpStatusCode::OK);
     }
 }

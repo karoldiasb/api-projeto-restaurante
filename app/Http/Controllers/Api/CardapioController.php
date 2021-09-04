@@ -8,6 +8,7 @@ use App\Models\Cardapio;
 use App\Models\Restaurante;
 use DB;
 use App\Traits\ResponseAPI;
+use App\Enum\HttpStatusCode;
 
 class CardapioController extends Controller
 {
@@ -39,17 +40,10 @@ class CardapioController extends Controller
                 $cardapios = Cardapio::with('restaurante')->get();
             }
 
-            return $this->success(
-                "Todos os cardápios", 
-                200, 
-                $cardapios
-            );
+            return $this->success(HttpStatusCode::OK, $cardapios);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );
+            return $this->error($e->getCode(), $e->getMessage());
         }
     }
 
@@ -85,15 +79,15 @@ class CardapioController extends Controller
 
             if(!$restaurante) 
                 return $this->error(
+                    HttpStatusCode::NOT_FOUND,
                     'Restaurante não encontrado', 
-                    400
                 );
 
             if(!$this->isValidAssociateCardapioToRestaurante($restaurante))
                 return $this->error(
+                    HttpStatusCode::UNPROCESSABLE_ENTITY,
                     "O restaurante {$restaurante->nome} já possui 3 cardápios ativos! 
-                    Desative um cardápio existente para que seja possível cadastrar um novo", 
-                    500
+                    Desative um cardápio existente para que seja possível cadastrar um novo"
                 );
 
             $cardapio = new Cardapio();
@@ -104,17 +98,13 @@ class CardapioController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Cardápio criado com sucesso!", 
-                201, 
-                $cardapio
-            );
+            return $this->success(HttpStatusCode::CREATED, $cardapio);
 
         } catch(\Exception $e) {
             DB::rollBack();
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -131,17 +121,10 @@ class CardapioController extends Controller
         try {
             $cardapio = Cardapio::with('produtos')->find($id);
             
-            return $this->success(
-                "Cardápio", 
-                200, 
-                $cardapio
-            );
+            return $this->success(HttpStatusCode::OK, $cardapio);
 
         } catch(\Exception $e) {
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode(),
-            );
+            return $this->error($e->getCode(), $e->getMessage());
         }
     }
 
@@ -163,15 +146,15 @@ class CardapioController extends Controller
             $restaurante = Restaurante::find($request->restaurante_id);
             if(!$restaurante) 
                 return $this->error(
-                    'Restaurante não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Restaurante não encontrado'
                 );
 
             $cardapio = Cardapio::find($id);
             if(!$cardapio) 
                 return $this->error(
-                    'Cardápio não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Cardápio não encontrado'
                 );
 
             $cardapio->descricao = $request->descricao;
@@ -181,16 +164,12 @@ class CardapioController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Cardápio alterado com sucesso!", 
-                200, 
-                $cardapio
-            );
+            return $this->success(HttpStatusCode::UPDATED);
             
         } catch(\Exception $e) {
             return $this->error(
-                $e->getMessage(), 
                 $e->getCode(),
+                $e->getMessage(), 
                 $e->errors()
             );
         }
@@ -210,8 +189,8 @@ class CardapioController extends Controller
 
             if(!$cardapio) 
                 return $this->error(
-                    'Cardápio não encontrado', 
-                    400
+                    HttpStatusCode::NOT_FOUND,
+                    'Cardápio não encontrado'
                 );
 
             $cardapio->delete();
@@ -225,10 +204,7 @@ class CardapioController extends Controller
             
         } catch(\Exception $e) {
             DB::rollBack();
-            return $this->error(
-                $e->getMessage(), 
-                $e->getCode()
-            );     
+            return $this->error($e->getCode(), $e->getMessage());        
         }
     }
 }

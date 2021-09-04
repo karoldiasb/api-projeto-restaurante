@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Models\User;
 use App\Traits\ResponseAPI;
 use DB;
+use App\Enum\HttpStatusCode;
+
 
 class UserController extends Controller
 {
@@ -40,7 +42,7 @@ class UserController extends Controller
 
             return $this->success(
                 "Usuário criado com sucesso!", 
-                201, 
+                HttpStatusCode::CREATED, 
                 $user
             );
 
