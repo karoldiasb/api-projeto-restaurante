@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurante;
+use App\Models\User;
 use DB;
 use App\Traits\ResponseAPI;
 
@@ -30,8 +31,14 @@ class RestauranteController extends Controller
     public function index()
     {
         try {
-            $restaurantes = Restaurante::with('cardapios', 'cardapios.produtos')->get();
-
+            if(!is_null(request('user_id'))){
+                $restaurantes = Restaurante::with('cardapios', 'cardapios.produtos')
+                    ->where('user_id', '=', request('user_id'))
+                    ->get();
+            }else{
+                $restaurantes = Restaurante::with('cardapios', 'cardapios.produtos')->get();
+            }
+            
             return $this->success(
                 "Todos os restaurantes", 
                 200, 
@@ -61,8 +68,17 @@ class RestauranteController extends Controller
 
             DB::beginTransaction();
 
+            $user = User::find($request->user_id);
+
+            if(!$user) 
+                return $this->error(
+                    'Usuário não encontrado', 
+                    400
+                );
+
             $restaurante = new Restaurante();
             $restaurante->nome = $request->nome;   
+            $restaurante->user()->associate($user);
             $restaurante->save();
 
             DB::commit();

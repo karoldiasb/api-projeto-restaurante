@@ -31,7 +31,13 @@ class CardapioController extends Controller
     public function index()
     {
         try {
-            $cardapios = Cardapio::with('restaurante')->get();
+            if(!is_null(request('user_id'))){
+                $cardapios = Cardapio::whereHas('restaurante', function ($query) {
+                    $query->where('user_id', '=', request('user_id'));
+                })->with('restaurante')->get();
+            }else{
+                $cardapios = Cardapio::with('restaurante')->get();
+            }
 
             return $this->success(
                 "Todos os cardápios", 

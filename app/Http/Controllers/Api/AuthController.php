@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -23,16 +24,22 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);   
+
+        $user = User::where('email', '=', $request->email)->get()->first();
 
         if (!$token = auth('api')->attempt($credentials)) {
+            $msg_error = "Invalid Login. Please check your credentials.";
+            if(count($user) == 0){
+                $msg_error = "User doesn't exist.";
+            }
             return response()->json([
                 'success' => false,
-                'error' => 'Invalid Login. Please check your credentials.'
+                'error' => $msg_error
             ], 401);
         }
-
-        return $this->respondWithToken($token);
+        
+        return $this->respondWithTokenAndUserId($token, $user->id);
     }
 
     /**
@@ -74,10 +81,11 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithTokenAndUserId($token, $user_id)
     {
         return response()->json([
             'success' => true,
+            'user_id' => $user_id,
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
