@@ -192,10 +192,7 @@ class CardapioController extends Controller
 
             DB::commit();
 
-            return $this->success(
-                "Cardápio deletado com sucesso!", 
-                200
-            );
+            return $this->success(HttpStatusCode::UPDATED);
             
         } catch(\Exception $e) {
             DB::rollBack();
