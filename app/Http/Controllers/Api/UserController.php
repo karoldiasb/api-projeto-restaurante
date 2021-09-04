@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\CardapioRequest;
 use App\Http\Controllers\Api\AuthController;
 use App\Models\User;
 use App\Traits\ResponseAPI;
@@ -18,17 +19,13 @@ class UserController extends Controller
     /**
     * Store a newly created resource in storage.
     *
-    * @param  \Illuminate\Http\Request  $request
+    * @param  \App\Http\Requests\UserRequest  $request
     * @return \Illuminate\Http\Response
     */
-   public function store(Request $request)
+   public function store(UserRequest $request)
    {
        try {
-            $validated = $request->validate([
-               'name' => 'required',
-               'email' => 'required|string|email|max:255|unique:users,email',
-               'password' => 'required'
-            ]);
+            $validated = $request->validated();
 
             DB::beginTransaction();
 
@@ -41,7 +38,6 @@ class UserController extends Controller
             DB::commit();
 
             return $this->success(
-                "Usuário criado com sucesso!", 
                 HttpStatusCode::CREATED, 
                 $user
             );
@@ -49,8 +45,8 @@ class UserController extends Controller
        } catch(\Exception $e) {
            DB::rollBack();
            return $this->error(
+                $e->getCode(),
                $e->getMessage(), 
-               $e->getCode(),
                $e->errors()
            );
        }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\ProdutoRequest;
 use App\Models\Produto;
 use App\Models\Cardapio;
 use DB;
@@ -49,15 +50,13 @@ class ProdutoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProdutoRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProdutoRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'descricao' => 'required',
-            ]);
+            $validated = $request->validated();
 
             DB::beginTransaction();
 
@@ -118,16 +117,14 @@ class ProdutoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProdutoRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProdutoRequest $request, $id)
     {
         try {
-            $validated = $request->validate([
-                'descricao' => 'required',
-            ]);
+            $validated = $request->validated();
             
             $cardapio = Cardapio::find($request->cardapio_id);
 

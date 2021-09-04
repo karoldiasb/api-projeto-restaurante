@@ -14,7 +14,7 @@ trait ResponseAPI
         } else {
             return response()->json([
                 'message' => $message,
-                'error_validator' => $errorValidator,
+                'errors' => $errorValidator,
             ], $statusCode);
         }
     }

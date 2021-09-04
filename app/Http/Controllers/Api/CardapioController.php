@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\CardapioRequest;
 use App\Models\Cardapio;
 use App\Models\Restaurante;
 use DB;
@@ -62,16 +63,13 @@ class CardapioController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\CardapioRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CardapioRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'descricao' => 'required',
-                'ativo' => 'required'
-            ]);
+            $validated = $request->validated();
 
             DB::beginTransaction();
 
@@ -131,17 +129,14 @@ class CardapioController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\CardapioRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CardapioRequest $request, $id)
     {
         try {
-            $validated = $request->validate([
-                'descricao' => 'required',
-                'ativo' => 'required'
-            ]);
+            $validated = $request->validated();
             
             $restaurante = Restaurante::find($request->restaurante_id);
             if(!$restaurante) 

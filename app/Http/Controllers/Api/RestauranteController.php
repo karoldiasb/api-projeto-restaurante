@@ -9,6 +9,7 @@ use App\Models\User;
 use DB;
 use App\Traits\ResponseAPI;
 use App\Enum\HttpStatusCode;
+use App\Http\Requests\RestauranteRequest;
 
 class RestauranteController extends Controller
 {
@@ -50,15 +51,13 @@ class RestauranteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\RestauranteRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RestauranteRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'nome' => 'required',
-            ]);
+            $validated = $request->validated();
 
             DB::beginTransaction();
 
@@ -110,16 +109,14 @@ class RestauranteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\RestauranteRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RestauranteRequest $request, $id)
     {
         try {
-            $validated = $request->validate([
-                'nome' => 'required',
-            ]);
+            $validated = $request->validated();
             
             DB::beginTransaction();
             
