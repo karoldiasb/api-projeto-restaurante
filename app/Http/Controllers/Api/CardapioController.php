@@ -192,7 +192,7 @@ class CardapioController extends Controller
 
             DB::commit();
 
-            return $this->success(HttpStatusCode::UPDATED);
+            return $this->success(HttpStatusCode::DELETED);
             
         } catch(\Exception $e) {
             DB::rollBack();

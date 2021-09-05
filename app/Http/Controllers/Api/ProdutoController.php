@@ -75,7 +75,6 @@ class ProdutoController extends Controller
                     O máximo é 10."
                 );
             }
-            $this->isValidAssociateProdutoAoCardapio($cardapio);
 
             $produto = new Produto();
             $produto->descricao = $request->descricao;
