@@ -1,30 +1,30 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libzip-dev \
-    imagemagick \
-    libmcrypt-dev \
+    git \
+    curl \
     libpng-dev \
-    libpq-dev \
-    libxrender1 \
-    locales \
-    openssh-client \
-    patch \
-    unzip \
-    zlib1g-dev \
+    libonig-dev \
+    libxml2-dev \
     zip \
-    --no-install-recommends && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    unzip
 
-RUN docker-php-ext-install \
-    gd \
-    bcmath \
-    pcntl \
-    pdo \
-    pdo_pgsql \
-    pdo_mysql \
-    zip
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directoryls -
+WORKDIR /var/www/html
+
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
+# Change current user to www
+USER www
