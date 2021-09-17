@@ -68,6 +68,11 @@ docker-compose build
 docker-compose up -d
 ```
 
+## Dar permissão ao usuário (caso seja terminal linux)
+```
+sudo chown -R user:user ./
+```
+
 ## Para entrar no docker
 ```
 docker exec -it api-projeto-restaurante-php-fpm bash
@@ -76,11 +81,6 @@ docker exec -it api-projeto-restaurante-php-fpm bash
 ## Instalar dependências
 ```
 composer install (dentro do docker)
-```
-
-## Dar permissão ao usuário 
-```
-sudo chown -R user:user ./
 ```
 
 ## Copie o arquivo ".env.example", cole na raiz do projeto e renomeie para ".env"
