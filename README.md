@@ -22,7 +22,7 @@
 
 ### Restaurantes
 ```    
-`GET /restaurantes`: return todos os restaurantes com os cardápios associados e os produtos associados aos cardápios
+`GET /restaurantes`: retorna todos os restaurantes com os cardápios associados e os produtos associados aos cardápios
 
 `POST /restaurantes`: registra um restaurante
 
@@ -35,7 +35,7 @@
 ```
 ### Cardápios
 ```    
-`GET /cardapios`: return todos os cardápios e os produtos associados aos cardápios
+`GET /cardapios`: retorna todos os cardápios e os produtos associados aos cardápios
 
 `POST /cardapios`: registra um cardápio
 
@@ -48,7 +48,7 @@
 ```
 ### Produtos
 ```    
-`GET /produtos`: return todos os produtos
+`GET /produtos`: retorna todos os produtos
 
 `POST /produtos`: registra um produto
 
@@ -62,11 +62,25 @@
 
 ## Instalação do ambiente
 ```
-docker-compose up --build -d
+docker-compose build
+```
+```
+docker-compose up -d
 ```
 
+## Para entrar no docker
+```
+docker exec -it api-projeto-restaurante-php-fpm bash
+```
+
+## Instalar dependências
 ```
 composer install (dentro do docker)
+```
+
+## Dar permissão ao usuário 
+```
+sudo chown -R user:user ./
 ```
 
 ## Copie o arquivo ".env.example", cole na raiz do projeto e renomeie para ".env"
